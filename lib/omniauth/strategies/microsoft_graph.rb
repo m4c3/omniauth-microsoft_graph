@@ -56,19 +56,13 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get(authorize_params.resource + 'v1.0/me').parsed
+        @raw_info ||= access_token.get('https://graph.microsoft.com/v1.0/me').parsed
       end
       def groups
         @groups ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
       end
-
-      def authorize_params
-        super.tap do |params|
-          options[:authorize_options].each do |k|
-            params[k] = request.params[k.to_s] unless [nil, ''].include?(request.params[k.to_s])
-            params[k] = options[k.to_s] unless [nil, ''].include?(options[k.to_s])
-          end
-        end
+      def callback_url
+        full_host + script_name + callback_path
       end
 
     end
