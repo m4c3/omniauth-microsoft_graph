@@ -3,23 +3,34 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class MicrosoftGraph < OmniAuth::Strategies::OAuth2
-      BASE_MICROSOFT_GRAPH_URL = 'https://login.microsoftonline.com'
+      BASE_AZURE_URL = 'https://login.microsoftonline.com'
       DEFAULT_SCOPE = "openid email profile https://graph.microsoft.com/User.Read"
 
       option :name, :microsoft_graph
+      option :tenant_provider, nil
+      args [:tenant_provider]
 
       def client
-        if options.tenant_id
-          tenant_id = options.tenant_id
+        if options.tenant_provider
+          provider = options.tenant_provider.new(self)
         else
-          tenant_id = 'common'
+          provider = options  # if pass has to config, get mapped right on to options
         end
-        options.client_options.authorize_url = "#{BASE_MICROSOFT_GRAPH_URL}/#{tenant_id}/oauth2/v2.0/authorize"
-        options.client_options.token_url = "#{BASE_MICROSOFT_GRAPH_URL}/#{tenant_id}/oauth2/v2.0/token"
-        options.client_options.site = "#{BASE_MICROSOFT_GRAPH_URL}/#{tenant_id}/oauth2/v2.0/authorize"
 
+        options.scope = provider.scopes.join(' ')
+        options.client_id = provider.client_id
+        options.client_secret = provider.client_secret
+        options.tenant_id =
+          provider.respond_to?(:tenant_id) ? provider.tenant_id : 'common'
+        options.base_azure_url =
+          provider.respond_to?(:base_azure_url) ? provider.base_azure_url : BASE_AZURE_URL
+
+        options.authorize_params = provider.authorize_params if provider.respond_to?(:authorize_params)
+        options.authorize_params.domain_hint = provider.domain_hint if provider.respond_to?(:domain_hint) && provider.domain_hint
+        options.authorize_params.prompt = request.params['prompt'] if defined? request && request.params['prompt']
+        options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
+        options.client_options.token_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/token"
         super
-      end
 
       option :authorize_options, %i[display score auth_type scope prompt login_hint domain_hint response_mode]
 
