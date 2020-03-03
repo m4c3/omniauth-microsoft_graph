@@ -3,15 +3,22 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class MicrosoftGraph < OmniAuth::Strategies::OAuth2
+      BASE_MICROSOFT_GRAPH_URL = 'https://login.microsoftonline.com'
+
       option :name, :microsoft_graph
-      DEFAULT_SCOPES = 'openid email profile User.Read'
 
+      def client
+        if options.tenant_id
+          tenant_id = options.tenant_id
+        else
+          tenant_id = 'common'
+        end
+        options.client_options.authorize_url = "#{BASE_MICROSOFT_GRAPH_URL}/#{tenant_id}/oauth2/v2.0/authorize"
+        options.client_options.token_url = "#{BASE_MICROSOFT_GRAPH_URL}/#{tenant_id}/oauth2/v2.0/token"
+        options.client_options.site = "#{BASE_MICROSOFT_GRAPH_URL}/#{tenant_id}/oauth2/v2.0/authorize"
 
-      option :client_options, {
-        site:          'https://login.microsoftonline.com',
-        token_url:     '/common/oauth2/v2.0/token',
-        authorize_url: '/common/oauth2/v2.0/authorize'
-      }
+        super
+      end
 
       option :authorize_options, %i[display score auth_type scope prompt login_hint domain_hint response_mode]
 
@@ -19,11 +26,11 @@ module OmniAuth
 
       info do
         {
-          email:      raw_info["mail"] || raw_info["userPrincipalName"],
-          first_name: raw_info["givenName"],
-          last_name:  raw_info["surname"],
-          name:       full_name,
-          nickname:   raw_info["userPrincipalName"],
+          'email' => raw_info["mail"],
+          'first_name' => raw_info["givenName"],
+          'last_name' => raw_info["surname"],
+          'name' => [raw_info["givenName"], raw_info["surname"]].join(' '),
+          'nickname' => raw_info["displayName"],
         }
       end
 
@@ -34,13 +41,9 @@ module OmniAuth
           'params' => access_token.params
         }
       end
-      
-      def callback_url
-        options[:redirect_uri] || (full_host + script_name + callback_path)
-      end
 
       def raw_info
-        @raw_info ||= access_token.get('https://graph.microsoft.com/v1.0/me').parsed
+        @raw_info ||= access_token.get(authorize_params.resource + 'v1.0/me').parsed
       end
       def groups
         @groups ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
@@ -48,26 +51,13 @@ module OmniAuth
 
       def authorize_params
         super.tap do |params|
-          %w[display score auth_type].each do |v|
-            if request.params[v]
-              params[v.to_sym] = request.params[v]
-            end
-          params[:scope] ||= DEFAULT_SCOPES
+          options[:authorize_options].each do |k|
+            params[k] = request.params[k.to_s] unless [nil, ''].include?(request.params[k.to_s])
+            params[k] = options[k.to_s] unless [nil, ''].include?(options[k.to_s])
           end
         end
       end
 
-      def full_name
-        raw_info["displayName"].presence || raw_info.values_at("givenName", "surname").compact.join(' ')
-      end
-
-      def build_access_token
-        if request.params['access_token']
-          ::OAuth2::AccessToken.from_hash(client, request.params.dup)
-        else
-          super
-        end
-      end
     end
   end
 end
