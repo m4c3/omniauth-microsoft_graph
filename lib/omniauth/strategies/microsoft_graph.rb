@@ -28,6 +28,7 @@ module OmniAuth
       extra do
         {
           'raw_info' => raw_info,
+          'groups' => groups,
           'params' => access_token.params
         }
       end
@@ -38,6 +39,9 @@ module OmniAuth
 
       def raw_info
         @raw_info ||= access_token.get('https://graph.microsoft.com/v1.0/me').parsed
+      end
+      def groups
+        @groups ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
       end
 
       def authorize_params
