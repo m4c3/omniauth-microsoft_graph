@@ -4,8 +4,8 @@ module OmniAuth
   module Strategies
     class MicrosoftGraph < OmniAuth::Strategies::OAuth2
       BASE_AZURE_URL = 'https://login.microsoftonline.com'
-      DEFAULT_SCOPE = "openid email profile https://graph.microsoft.com/User.Read"
-
+      
+      option :scopes, ['openid', 'profile', 'offline_access']
       option :name, :microsoft_graph
       option :tenant_provider, nil
       args [:tenant_provider]
@@ -68,7 +68,6 @@ module OmniAuth
             params[k] = request.params[k.to_s] unless [nil, ''].include?(request.params[k.to_s])
             params[k] = options[k.to_s] unless [nil, ''].include?(options[k.to_s])
           end
-          params[:scope] ||= DEFAULT_SCOPE
         end
       end
 
