@@ -4,6 +4,8 @@ module OmniAuth
   module Strategies
     class MicrosoftGraph < OmniAuth::Strategies::OAuth2
       option :name, :microsoft_graph
+      DEFAULT_SCOPES = 'openid email profile User.Read'
+
 
       option :client_options, {
         site:          'https://login.microsoftonline.com',
@@ -50,6 +52,7 @@ module OmniAuth
             if request.params[v]
               params[v.to_sym] = request.params[v]
             end
+          params[:scope] ||= DEFAULT_SCOPES
           end
         end
       end
