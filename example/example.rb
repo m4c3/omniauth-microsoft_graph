@@ -6,12 +6,13 @@ require 'json'
 
 set :port, 4200
 
-client_id = ENV['AZURE_APPLICATION_CLIENT_ID']
-secret = ENV['AZURE_APPLICATION_CLIENT_SECRET']
+client_id = ENV['AZURE_CLIENT_ID']
+secret = ENV['AZURE_CLIENT_SECRET']
+tenant_id = ENV['AZURE_TENNAND_ID']
 
 use Rack::Session::Cookie
 use OmniAuth::Builder do
-  provider :microsoft_graph, client_id, secret
+  provider :microsoft_graph, {client_id, secret, tenant_id}
 end
 
 get '/' do
