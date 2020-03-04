@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'omniauth_microsoft_graph'
+require 'omniauth-microsoft_graph'
 
 module OmniAuth
   module Strategies
