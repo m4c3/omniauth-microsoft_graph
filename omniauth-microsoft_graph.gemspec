@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'omniauth/microsoft_graph/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'omniauth-microsoft_graph'
+  spec.name          = 'omniauth_microsoft_graph'
   spec.version       = Omniauth::MicrosoftGraph::VERSION
   spec.authors       = ["Matthias H\xC3\xA4hnel"]
   spec.email         = ['matthias.haehnel@sixt.com']
