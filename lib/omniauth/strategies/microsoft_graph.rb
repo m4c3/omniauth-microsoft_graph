@@ -11,6 +11,7 @@ module OmniAuth
       option :name, :microsoft_graph
       option :tenant_provider, nil
       args [:tenant_provider]
+      option :extensions, ""
 
       def client
         provider = if options.tenant_provider
@@ -59,6 +60,7 @@ module OmniAuth
         {
           'raw_info' => raw_info,
           'memberships' => memberships,
+          'extensions' => extensions,
           'params' => access_token.params
         }
       end
@@ -69,6 +71,11 @@ module OmniAuth
 
       def memberships
         @memberships ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
+      end
+      def extensions
+        if options.extensions 
+         @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=' + options.extensions).parsed
+        end
       end
 
       def callback_url
