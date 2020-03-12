@@ -7,7 +7,7 @@ module OmniAuth
     class MicrosoftGraph < OmniAuth::Strategies::OAuth2
       BASE_AZURE_URL = 'https://login.microsoftonline.com'
 
-      option :scopes, %w[openid profile offline_access]
+      option :scopes, ['openid', 'profile', 'offline_access']
       option :name, :microsoft_graph
       option :tenant_provider, nil
       args [:tenant_provider]
@@ -73,9 +73,9 @@ module OmniAuth
         @memberships ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
       end
       def extensions
-        if options.extensions 
+        #if options.extensions 
          @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me?$select=' + options.extensions).parsed
-        end
+        #end
       end
 
       def callback_url
