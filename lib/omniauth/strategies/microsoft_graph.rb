@@ -74,7 +74,7 @@ module OmniAuth
       end
       def extensions
         if options.extensions 
-         @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=' + options.extensions).parsed
+         @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me?$select=' + options.extensions).parsed
         end
       end
 
