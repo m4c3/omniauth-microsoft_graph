@@ -7,7 +7,7 @@ module OmniAuth
     class MicrosoftGraph < OmniAuth::Strategies::OAuth2
       BASE_AZURE_URL = 'https://login.microsoftonline.com'
 
-      option :scope, 'openid, email, profile'
+      option :scopes, %w[openid profile offline_access]
       option :name, :microsoft_graph
       option :tenant_provider, nil
       args [:tenant_provider]
@@ -20,6 +20,7 @@ module OmniAuth
                      options # if pass has to config, get mapped right on to options
                    end
 
+        options.scope = provider.scopes.join(' ')
         options.client_id = provider.client_id
         options.client_secret = provider.client_secret
         options.tenant_id =
