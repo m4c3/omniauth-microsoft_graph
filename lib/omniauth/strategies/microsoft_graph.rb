@@ -18,7 +18,6 @@ module OmniAuth
 
 
       def client
-        options.scope = option.scopes.join(' ')
         options.base_azure_url = BASE_AZURE_URL
 
         options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
