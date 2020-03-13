@@ -18,6 +18,7 @@ module OmniAuth
 
 
       def client
+        options.scope = option.scope
         options.base_azure_url = BASE_AZURE_URL
 
         options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
@@ -54,11 +55,11 @@ module OmniAuth
         @memberships ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
       end
       def extensions
-        #if options.extensions
-         Rails.logger.warn "extensions:" + options.extensions
-         @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me?$select=' + options.extensions).parsed
+        if option.extensions
+         Rails.logger.warn "extensions:" + option.extensions
+         @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me?$select=' + option.extensions).parsed
          Rails.logger.warn "extensions:" + @extension
-        #end
+        end
       end
 
       def callback_url
