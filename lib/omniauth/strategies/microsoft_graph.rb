@@ -19,6 +19,7 @@ module OmniAuth
 
       def client
         options.base_azure_url = BASE_AZURE_URL
+        options.scope = 'openid profile offline_access'
 
         options.client_options.authorize_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/authorize"
         options.client_options.token_url = "#{options.base_azure_url}/#{options.tenant_id}/oauth2/v2.0/token"
