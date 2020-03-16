@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 0.2.2 - 2020-03-04
+
+* Added support for schema extensions
+
 ### 0.2.1 - 2020-03-04
 
 * Forked https://github.com/synth/omniauth-microsoft_graph

@@ -9,6 +9,7 @@ set :port, 4200
 client_id = ENV['AZURE_CLIENT_ID']
 secret = ENV['AZURE_CLIENT_SECRET']
 tenant_id = ENV['AZURE_TENNAND_ID']
+extensions = ENV['AZURE_EXTENSIONS']
 
 use Rack::Session::Cookie
 use OmniAuth::Builder do
