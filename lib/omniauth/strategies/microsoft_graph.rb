@@ -75,7 +75,7 @@ module OmniAuth
 
       def extensions
        Rails.logger.warn "extensions:" + options[:extensions]
-        if option.extensions
+        if options.extensions
          @extensions ||= access_token.get('https://graph.microsoft.com/v1.0/me?$select=' + options[:extensions]).parsed
          Rails.logger.warn "extensions:" + @extension
         end
