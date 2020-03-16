@@ -60,6 +60,7 @@ module OmniAuth
         {
           'raw_info' => raw_info,
           'memberships' => memberships,
+          'extensions' => extensions,
           'params' => access_token.params
         }
       end
