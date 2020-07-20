@@ -70,7 +70,7 @@ module OmniAuth
       end
 
       def memberships
-        @memberships ||= access_token.get('https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName').parsed
+        @memberships ||= access_token.get('https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=displayName').parsed
       end
 
       def extensions
